@@ -76,6 +76,48 @@
 
     <div class="title">MEPS Browser</div>
 
+    <div class="selector-container">
+        <div class="selector">
+            <label for="hourSelect">Hour</label>
+            <select id="hourSelect" onchange="loadContent()">
+                <option value="00">00</option>
+                <option value="03">03</option>
+                <option value="06">06</option>
+                <option value="09">09</option>
+                <option value="12">12</option>
+                <option value="15">15</option>
+                <option value="18">18</option>
+                <option value="21">21</option>
+            </select>
+        </div>
+        <div class="selector">
+            <label for="variableSelect">Variable</label>
+            <select id="variableSelect" onchange="loadContent()">
+                <option value="PrecInst">PrecInst</option>
+                <option value="PrecAcc">PrecAcc</option>
+                <option value="PrecSolid">PrecSolid</option>
+                <option value="PrecType">PrecType</option>
+                <option value="T_2mC">T_2mC</option>
+                <option value="T_2mCzoom">T_2mCzoom</option>
+                <option value="WindSPEED">WindSPEED</option>
+                <option value="CloudAmount">CloudAmount</option>
+                <option value="CloudBase">CloudBase</option>
+                <option value="CloudDepth">CloudDepth</option>
+                <option value="CloudTop">CloudTop</option>
+                <option value="Visibility">Visibility</option>
+                <option value="Hail">Hail</option>
+                <option value="Lightning">Lightning</option>
+                <option value="MU-CAPE">MU-CAPE</option>
+                <option value="MLH">MLH</option>
+                <option value="IcingHeight">IcingHeight</option>
+                <option value="MaxCAT">MaxCAT</option>
+                <option value="MaxWind">MaxWind</option>
+                <option value="Tinv">Tinv</option>
+                <option value="Wmax">Wmax</option>
+            </select>
+        </div>
+    </div>
+
     <div class="content-container">
         <div class="slider-container">
             <button id="prevBtn">Previous</button>
@@ -85,48 +127,6 @@
 
         <div id="image-container">
             <!-- Images will be loaded here dynamically -->
-        </div>
-
-        <div class="selector-container">
-            <div class="selector">
-                <label for="hourSelect">Hour</label>
-                <select id="hourSelect" onchange="loadContent()">
-                    <option value="00">00</option>
-                    <option value="03">03</option>
-                    <option value="06">06</option>
-                    <option value="09">09</option>
-                    <option value="12">12</option>
-                    <option value="15">15</option>
-                    <option value="18">18</option>
-                    <option value="21">21</option>
-                </select>
-            </div>
-            <div class="selector">
-                <label for="variableSelect">Variable</label>
-                <select id="variableSelect" onchange="loadContent()">
-                    <option value="PrecInst">PrecInst</option>
-                    <option value="PrecAcc">PrecAcc</option>
-                    <option value="PrecSolid">PrecSolid</option>
-                    <option value="PrecType">PrecType</option>
-                    <option value="T_2mC">T_2mC</option>
-                    <option value="T_2mCzoom">T_2mCzoom</option>
-                    <option value="WindSPEED">WindSPEED</option>
-                    <option value="CloudAmount">CloudAmount</option>
-                    <option value="CloudBase">CloudBase</option>
-                    <option value="CloudDepth">CloudDepth</option>
-                    <option value="CloudTop">CloudTop</option>
-                    <option value="Visibility">Visibility</option>
-                    <option value="Hail">Hail</option>
-                    <option value="Lightning">Lightning</option>
-                    <option value="MU-CAPE">MU-CAPE</option>
-                    <option value="MLH">MLH</option>
-                    <option value="IcingHeight">IcingHeight</option>
-                    <option value="MaxCAT">MaxCAT</option>
-                    <option value="MaxWind">MaxWind</option>
-                    <option value="Tinv">Tinv</option>
-                    <option value="Wmax">Wmax</option>
-                </select>
-            </div>
         </div>
     </div>
 
@@ -189,6 +189,7 @@
 
 </body>
 </html>
+
 
 
 
