@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Animation with Initialization Hour and Variable Selector</title>
+    <title>MEPS Browser</title>
     <style>
         body {
             display: flex;
@@ -17,10 +17,15 @@
             background-color: #d0d0d0;
             padding: 20px;
             box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .left-panel.hidden {
+            transform: translateX(-100%);
         }
         .right-panel {
             flex-grow: 1;
             padding: 20px;
+            position: relative;
         }
         iframe {
             width: 100%;
@@ -46,11 +51,39 @@
             margin-bottom: 20px;
             text-align: center;
         }
+        .toggle-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            z-index: 1000;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        @media screen and (max-width: 768px) {
+            .left-panel {
+                position: absolute;
+                z-index: 1000;
+                height: 100%;
+                top: 0;
+                left: 0;
+                transform: translateX(-100%);
+            }
+            .left-panel.visible {
+                transform: translateX(0);
+            }
+        }
     </style>
 </head>
 <body>
 
-    <div class="left-panel">
+    <div class="left-panel" id="leftPanel">
         <div class="title">MEPS browser</div>
         <div class="selector">
             <label for="hourSelect">Hour</label>
@@ -94,10 +127,16 @@
     </div>
 
     <div class="right-panel">
+        <button class="toggle-btn" onclick="toggleLeftPanel()">Toggle Menu</button>
         <iframe id="animationFrame" src="about:blank"></iframe>
     </div>
 
     <script>
+        function toggleLeftPanel() {
+            const leftPanel = document.getElementById('leftPanel');
+            leftPanel.classList.toggle('hidden');
+        }
+
         function loadContent() {
             const hour = document.getElementById('hourSelect').value;
             const variable = document.getElementById('variableSelect').value;
@@ -124,7 +163,7 @@
                             align-items: center;
                         }
                         #slider {
-                            width: 300px;
+                            width: 80%;
                             margin: 10px;
                         }
                         img {
@@ -216,4 +255,3 @@
     
 </body>
 </html>
-
