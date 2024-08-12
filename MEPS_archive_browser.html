@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEPS archive browser</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .content-container {
+            width: 90%;
+            max-width: 1200px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+        }
+        .selector-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .selector {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+        .selector label {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .selector select,
+        .selector input[type="date"] {
+            padding: 10px;
+            font-size: 16px;
+        }
+        .slider-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        #slider {
+            width: 80%;
+            margin: 0 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="title">MEPS archive browser</div>
+
+    <div class="selector-container">
+        <div class="selector">
+            <label for="dateSelect">Date</label>
+            <input type="date" id="dateSelect" value="" onchange="loadContent()" lang="en-GB">
+        </div>
+        <div class="selector">
+            <label for="hourSelect">Hour</label>
+            <select id="hourSelect" onchange="loadContent()">
+                <option value="00">00</option>
+                <option value="12">12</option>
+            </select>
+        </div>
+        <div class="selector">
+            <label for="variableSelect">Variable</label>
+            <select id="variableSelect" onchange="loadContent()">
+                <option value="PrecInst">PrecInst</option>
+                <option value="PrecAcc">PrecAcc</option>
+                <option value="PrecSolid">PrecSolid</option>
+                <option value="PrecType">PrecType</option>
+                <option value="T_2mC">T_2mC</option>
+                <option value="T_2mCzoom">T_2mCzoom</option>
+                <option value="WindSPEED">WindSPEED</option>
+                <option value="CloudAmount">CloudAmount</option>
+                <option value="CloudBase">CloudBase</option>
+                <option value="CloudDepth">CloudDepth</option>
+                <option value="CloudTop">CloudTop</option>
+                <option value="Visibility">Visibility</option>
+                <option value="Hail">Hail</option>
+                <option value="Lightning">Lightning</option>
+                <option value="MU-CAPE">MU-CAPE</option>
+                <option value="MLH">MLH</option>
+                <option value="IcingHeight">IcingHeight</option>
+                <option value="MaxCAT">MaxCAT</option>
+                <option value="MaxWind">MaxWind</option>
+                <option value="Tinv">Tinv</option>
+                <option value="Wmax">Wmax</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="content-container">
+        <div class="slider-container">
+            <button id="prevBtn">Previous</button>
+            <input type="range" id="slider" min="1" max="24" value="1">
+            <button id="nextBtn">Next</button>
+        </div>
+
+        <div id="image-container">
+            <!-- Images will be loaded here dynamically -->
+        </div>
+    </div>
+
+    <script>
+        function loadContent() {
+            const date = document.getElementById('dateSelect').value;
+            const hour = document.getElementById('hourSelect').value;
+            const variable = document.getElementById('variableSelect').value;
+
+            const [yyyy, mm, dd] = date.split('-');
+            const baseURL = `https://fminwp.fmi.fi/Harmonie-pyth/archive_meps/${yyyy}/${mm}/${dd}/${hour}/weathermaps/${variable}_`;
+
+            const imageContainer = document.getElementById('image-container');
+            imageContainer.innerHTML = ''; // Clear previous images
+
+            for (let i = 1; i <= 24; i++) {
+                const img = document.createElement('img');
+                const imgNum = i.toString().padStart(2, '0');
+                img.id = `image${hour}${imgNum}`;
+                img.src = `${baseURL}${hour}${imgNum}.png`;
+                img.alt = `Image ${hour}${imgNum}`;
+                if (i === 1) {
+                    img.classList.add('active');
+                    img.style.display = 'block';
+                } else {
+                    img.style.display = 'none';
+                }
+                imageContainer.appendChild(img);
+            }
+        }
+
+        function updateImages(value) {
+            const images = document.querySelectorAll('#image-container img');
+            images.forEach((img, index) => {
+                img.style.display = (index + 1) == value ? 'block' : 'none';
+            });
+        }
+
+        document.getElementById('slider').addEventListener('input', function() {
+            updateImages(this.value);
+        });
+
+        document.getElementById('prevBtn').addEventListener('click', function() {
+            const slider = document.getElementById('slider');
+            if (slider.value > 1) {
+                slider.value--;
+                updateImages(slider.value);
+            }
+        });
+
+        document.getElementById('nextBtn').addEventListener('click', function() {
+            const slider = document.getElementById('slider');
+            if (slider.value < 24) {
+                slider.value++;
+                updateImages(slider.value);
+            }
+        });
+
+        window.onload = function() {
+            // Set default date to today in YYYY-MM-DD format
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('dateSelect').value = today;
+
+            loadContent();
+        }
+    </script>
+
+    <div class="footer">
+        <a href="https://niemelas.github.io/MEPS_browser/">Back to MEPS real-time browser</a>
+    </div>
+
+</body>
+</html>
+
