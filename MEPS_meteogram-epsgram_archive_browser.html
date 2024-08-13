@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEPS Meteogram/EPSgram archive browser</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .content-container {
+            width: 90%;
+            max-width: 1200px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+        }
+        .selector-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .selector {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+        .selector label {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .selector select,
+        .selector input[type="date"] {
+            padding: 10px;
+            font-size: 16px;
+        }
+        .slider-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        #slider {
+            width: 80%;
+            margin: 0 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+        .image-container {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        .image-title {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .image-box {
+            width: 45%;
+        }
+        .subtitle {
+            font-style: italic;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="title">MEPS Meteogram/EPSgram archive browser</div>
+
+    <div class="selector-container">
+        <div class="selector">
+            <label for="dateSelect">Date</label>
+            <input type="date" id="dateSelect" value="" onchange="loadContent()" lang="en-GB">
+        </div>
+        <div class="selector">
+            <label for="hourSelect">Hour</label>
+            <select id="hourSelect" onchange="loadContent()">
+                <option value="00">00</option>
+                <option value="12">12</option>
+            </select>
+        </div>
+        <div class="selector">
+            <label for="locationSelect">Location</label>
+            <select id="locationSelect" onchange="loadContent()">
+                <!-- Locations will be dynamically populated here -->
+            </select>
+        </div>
+    </div>
+
+    <div class="slider-container">
+        <button id="prevBtn">Previous</button>
+        <!-- Set max value for slider to 15 to take 14 steps -->
+        <input type="range" id="slider" min="1" max="15" value="1">
+        <button id="nextBtn">Next</button>
+    </div>
+
+    <div class="content-container">
+        <div class="image-container">
+            <div class="image-box">
+                <div class="image-title">Meteogram</div>
+                <img id="leftImage" src="" alt="Meteogram">
+            </div>
+            <div class="image-box">
+                <div class="image-title">EPSgram</div>
+                <img id="rightImage" src="" alt="EPSgram">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const locations = `
+Western Finland
+Espoo
+Forssa
+Halli
+Hanko_sea
+Helsinki_meri
+Helsinki-Itakeskus
+Helsinki-Kaisaniemi
+Helsinki-Kumpula
+Helsinki-Malmi-EFHF
+Helsinki-Vantaa
+Hirlamsmossen
+Houtskari
+Hyvinkaa
+Hameenlinna
+Jarvenpaa
+Joppe
+Kallbadan
+Kauhava
+Kemio
+Kilo13
+Kokkola
+Kopsa
+Kumlinge
+Lake-Nasijarvi
+Lohja
+Maarianhamina
+Market
+Niinisalo
+Pori
+Pori_sea
+Rauma
+Riihimaki
+Rayskala
+Salo
+Seinajoki
+Suomen_leijona
+Tammisaari
+Tampere
+Tampere-EFTP
+Turku
+Turku-EFTU
+Vaasa
+Eastern Finland
+Hamina
+Imatra
+Joensuu
+Jyvaskyla
+Kiuruvesi
+Kontiolahti
+Kotka
+Kouvola
+Kuopio
+Kuopio-EFKU
+Lahti
+Lahti-Ski
+Lake-Paijanne
+Lake-Saimaa
+Lappeenranta
+Lieksa-Nurmes
+Mantyharju
+Mikkeli
+Palokka
+Porvoo
+Rantasalmi
+Savonlinna
+Savonlinna-EFSA
+Tikkakoski-EFJY
+Utti
+Varkaus
+Varkaus-EFVR
+Northern Finland
+Enontekio-Hetta
+Halti
+Ivalo
+Kajaani
+Kilpisjarvi
+Kemi
+Kemijarvi
+Kittila
+Kuhmo
+Kuusamo
+Muonio
+Oulu
+Pudasjarvi
+Rovaniemi
+Rovaniemi-EFRO
+Ruka
+Salla
+Sodankyla
+Utsjoki
+Vuokatti
+Northern Sweden
+Abisko
+Kiruna
+Gallivare
+Jokkmokk
+Tjakaape
+Overkalix
+Vidsel
+Arvidsjaur
+Kallax
+Gunnarn
+Skelleftea
+Lycksele
+Umea
+Ornskoldsvik
+Ostersund
+Are-Ostersunds
+Kramfors-Solleftea
+Sundsvall-Timra
+Lulea
+Sveg
+Salen
+Malung
+Gavle-Sandviken
+Borlange
+Trangslet
+Southern Sweden
+Uppsala-Arna
+Norrtalje
+Arlanda
+Vasteras
+Karlstad
+Bromma
+Kilsbergen
+Nordostra-Ostersjon
+Orebro
+Norrkoping
+Stockholm
+Falun
+Flygsektor-S92
+Flygsektor-M84
+Norrkoping-Kungsangen
+Skavsta
+Karlsborgs
+Flygsektor-M23
+Skovde
+Satenas
+Linkoping-SAAB
+Malmens
+Trollhattan-Vanersborgs
+Flygsektor-M21
+Save
+Jonkopings
+Landvetter
+Visby
+Hagshults
+Ljungby
+Vaxjo
+Kosta
+Halmstads
+Kalmar
+Flygsektor-S15
+Angelholm
+Kallinge
+Ljungbyheds
+Kristianstads
+Malmo-Sturup
+Sydostra-Ostersjon
+Flygsektor-M32
+Vasterviks
+Other
+Kuola_NPP
+St-Petersburg
+Tallinn
+Tartu
+Toravere
+Otepaa
+Riga
+Vilnius
+Copenhagen
+Oslo
+Oslo_ski
+Holmenkollen
+Drammen
+Trondheim
+Lillehammer
+Surnadal
+        `.trim().split('\n');
+
+        function populateLocationDropdown() {
+            const locationSelect = document.getElementById('locationSelect');
+            locationSelect.innerHTML = ''; // Clear existing options
+
+            locations.forEach(location => {
+                const option = document.createElement('option');
+                if (location.includes('Finland') || location.includes('Sweden') || location === 'Other') {
+                    option.textContent = location;
+                    option.classList.add('subtitle');
+                    option.disabled = true;
+                } else {
+                    option.textContent = location;
+                    option.value = location;
+                }
+                locationSelect.appendChild(option);
+            });
+
+            // Set default location to "Helsinki-Vantaa"
+            locationSelect.value = "Helsinki-Vantaa";
+        }
+
+        function loadContent() {
+            const date = document.getElementById('dateSelect').value;
+            const hour = document.getElementById('hourSelect').value;
+            const location = document.getElementById('locationSelect').value;
+
+            const [yyyy, mm, dd] = date.split('-');
+            const leftBaseURL = `https://fminwp.fmi.fi/Harmonie-pyth/archive_meps/${yyyy}/${mm}/${dd}/${hour}/meteograms/Metg_mbr000${location}.png`;
+            const rightBaseURL = `https://fminwp.fmi.fi/Harmonie-pyth/archive_meps/${yyyy}/${mm}/${dd}/${hour}/EPSgrams/EPSgram_${location}.png`;
+
+            document.getElementById('leftImage').src = leftBaseURL;
+            document.getElementById('rightImage').src = rightBaseURL;
+        }
+
+        document.getElementById('slider').addEventListener('input', function () {
+            updateSliderImages(this.value);
+        });
+
+        document.getElementById('prevBtn').addEventListener('click', function () {
+            const slider = document.getElementById('slider');
+            if (slider.value > 1) {
+                slider.value--;
+                updateSliderImages(slider.value);
+            }
+        });
+
+        document.getElementById('nextBtn').addEventListener('click', function () {
+            const slider = document.getElementById('slider');
+            if (slider.value < 15) { // Adjusted to match the new max value for 14 steps
+                slider.value++;
+                updateSliderImages(slider.value);
+            }
+        });
+
+        function updateSliderImages(sliderValue) {
+            const startDate = new Date(document.getElementById('dateSelect').value);
+            const startHour = document.getElementById('hourSelect').value;
+
+            const hoursToAdd = (sliderValue - 1) * 12;
+            const newDate = new Date(startDate);
+            newDate.setHours(parseInt(startHour) + hoursToAdd);
+
+            const yyyy = newDate.getFullYear();
+            const mm = String(newDate.getMonth() + 1).padStart(2, '0');
+            const dd = String(newDate.getDate()).padStart(2, '0');
+            const hh = String(newDate.getHours()).padStart(2, '0');
+
+            const location = document.getElementById('locationSelect').value;
+
+            const leftBaseURL = `https://fminwp.fmi.fi/Harmonie-pyth/archive_meps/${yyyy}/${mm}/${dd}/${hh}/meteograms/Metg_mbr000${location}.png`;
+            const rightBaseURL = `https://fminwp.fmi.fi/Harmonie-pyth/archive_meps/${yyyy}/${mm}/${dd}/${hh}/EPSgrams/EPSgram_${location}.png`;
+
+            document.getElementById('leftImage').src = leftBaseURL;
+            document.getElementById('rightImage').src = rightBaseURL;
+        }
+
+        window.onload = function () {
+            // Set default date to 7 days before today in YYYY-MM-DD format
+            const today = new Date();
+            today.setDate(today.getDate() - 7);
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            document.getElementById('dateSelect').value = `${yyyy}-${mm}-${dd}`;
+
+            populateLocationDropdown();
+            loadContent();
+        }
+    </script>
+
+    <div class="footer">
+        <a href="https://niemelas.github.io/MEPS_browser/">Back to MEPS real-time browser</a>
+    </div>
+
+</body>
+</html>
+
+
+
+
