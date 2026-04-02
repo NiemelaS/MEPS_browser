@@ -348,7 +348,7 @@ Surnadal
             const location = document.getElementById('locationSelect').value;
 
             const [yyyy, mm, dd] = date.split('-');
-            const leftBaseURL = `https://fminwp.fmi.fi/Harmonie-pyth/archive_meps/${yyyy}/${mm}/${dd}/${hour}/meteograms/Metg_mbr000${location}.png`;
+            const leftBaseURL = `https://fminwp.fmi.fi/Harmonie-pyth/archive_meps/${yyyy}/${mm}/${dd}/${hour}/meteograms/Metg_${location}.png`;
             const rightBaseURL = `https://fminwp.fmi.fi/Harmonie-pyth/archive_meps/${yyyy}/${mm}/${dd}/${hour}/EPSgrams/EPSgram_${location}.png`;
 
             document.getElementById('leftImage').src = leftBaseURL;
@@ -390,7 +390,7 @@ Surnadal
 
             const location = document.getElementById('locationSelect').value;
 
-            const leftBaseURL = `https://fminwp.fmi.fi/Harmonie-pyth/archive_meps/${yyyy}/${mm}/${dd}/${hh}/meteograms/Metg_mbr000${location}.png`;
+            const leftBaseURL = `https://fminwp.fmi.fi/Harmonie-pyth/archive_meps/${yyyy}/${mm}/${dd}/${hh}/meteograms/Metg_${location}.png`;
             const rightBaseURL = `https://fminwp.fmi.fi/Harmonie-pyth/archive_meps/${yyyy}/${mm}/${dd}/${hh}/EPSgrams/EPSgram_${location}.png`;
 
             document.getElementById('leftImage').src = leftBaseURL;
